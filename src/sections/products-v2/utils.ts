@@ -61,7 +61,6 @@ export function applyFilter({ inputData, comparator, filterName, statuses }) {
   // filter by status
   if (statuses.length) {
     inputData = inputData.filter((user: FinanceSheet) => {
-      console.log(user);
       return statuses.includes(user.shopReceipt?.status?.toLowerCase());
     });
   }
