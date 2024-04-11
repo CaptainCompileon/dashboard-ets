@@ -6,6 +6,7 @@
   "private": false,
   "scripts": {
     "dev": "vite",
+    "dev:force": "vite --force",
     "start": "vite preview",
     "build": "vite build",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
