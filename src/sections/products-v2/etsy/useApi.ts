@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
-import { fetchShopListingMock } from './etsy-api';
 import { EtsyApiResponse, ShopReceipt, Transaction } from './etsy-api.types';
 import { createFinanceSheet, FinanceSheet, Shop } from './etsy-utils.ts';
+import { MOCK_SHOP_RECEIPTS } from './mock_shop_receipts.ts';
 
 export type ShopWithUserId = Shop & { user_id?: number };
 //TODO(Adam): Throwing errors like this is in general not a good practice,
@@ -64,6 +64,51 @@ export function useApiShopReceipts(
   }, [apiUrl]);
 
   return { userData, loading, error };
+}
+
+export function useApiShopReceiptsMock() {
+  const [userData, setUserData] = useState<
+    { user: { shop_id: number; user_id: number }; data: FinanceSheet }[]
+  >([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    async function fetchDataMock() {
+      try {
+        const users: { shop_id: number; user_id: number }[] = [
+          { shop_id: 1, user_id: 1 },
+          // Add more mock users as needed
+        ];
+
+        if (!users || users.length === 0) {
+          throw new Error('No users found');
+        }
+
+        const allData: {
+          user: { shop_id: number; user_id: number };
+          data: FinanceSheet;
+        }[] = [];
+
+        for (const user of users) {
+          const results: ShopReceipt[] = MOCK_SHOP_RECEIPTS.results;
+          const financeSheet = createFinanceSheet(results);
+          allData.push({ user, data: financeSheet });
+        }
+        setUserData(allData);
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+      }
+    }
+
+    fetchDataMock();
+
+    return () => {
+      // Cleanup function if needed
+    };
+  }, []);
+
+  return { userData, loading };
 }
 
 export function useApiShop(
@@ -140,33 +185,6 @@ export function getShopLoginLink(
   };
 
   return { fetchShopLink, error };
-}
-
-export function useApiShopReceiptsMock() {
-  const [data, setData] = useState<FinanceSheet>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    async function fetchDataMock() {
-      try {
-        const response = await fetchShopListingMock();
-        const results = response?.results ? response?.results : [];
-        const financeSheet = createFinanceSheet(results);
-        setData(financeSheet);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-      }
-    }
-
-    fetchDataMock();
-
-    return () => {
-      // Cleanup function if needed
-    };
-  }, []);
-
-  return { data, loading };
 }
 
 export function useDeleteUserById(
