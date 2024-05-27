@@ -39,7 +39,7 @@ export function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-export function applyFilter({ inputData, comparator, filterName, statuses }) {
+export function applyFilter({ inputData, comparator, filterName, statuses, dateRange }) {
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
   stabilizedThis.sort((a, b) => {
@@ -62,6 +62,34 @@ export function applyFilter({ inputData, comparator, filterName, statuses }) {
   if (statuses.length) {
     inputData = inputData.filter((user: FinanceSheet) => {
       return statuses.includes(user.shopReceipt?.status?.toLowerCase());
+    });
+  }
+
+  // filter by date range
+  if (dateRange) {
+    console.log(dateRange[1]?.getTime(), dateRange[0]?.getTime());
+    inputData = inputData.filter((user: FinanceSheet) => {
+      if (!user.shopReceipt?.created_timestamp) {
+        return false;
+      }
+      if (!dateRange[0] && !dateRange[1]) {
+        return true;
+      }
+      if (!dateRange[0]) {
+        return user.shopReceipt?.created_timestamp <= dateRange[1]?.getTime();
+      }
+      if (!dateRange[1]) {
+        return user.shopReceipt?.created_timestamp >= (dateRange[0] as Date)?.getTime();
+      }
+      console.log(
+        user.shopReceipt?.created_timestamp,
+        user.shopReceipt?.created_timestamp >= (dateRange[0] as Date)?.getTime(),
+        user.shopReceipt?.created_timestamp <= dateRange[1]?.getTime(),
+      );
+      return (
+        user.shopReceipt?.created_timestamp >= (dateRange[0] as Date)?.getTime() &&
+        user.shopReceipt?.created_timestamp <= dateRange[1]?.getTime()
+      );
     });
   }
 

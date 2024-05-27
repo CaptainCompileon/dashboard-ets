@@ -6,6 +6,8 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { ChangeEvent, useState } from 'react';
+import { DateRangePicker } from 'rsuite';
+import { ValueType } from 'rsuite/DateRangePicker';
 import Iconify from 'src/components/iconify';
 
 import MultiSelect from '../../components/multi-select/multi-select.tsx';
@@ -19,6 +21,8 @@ interface UserTableToolbarProps {
   onFilterName: (event: ChangeEvent<HTMLInputElement>) => void;
   statuses: string[];
   onStatusesChange: (event, newStatuses: Status[]) => void;
+  dateRange: ValueType;
+  onDateRangeChange: (event, newValue: ValueType) => void;
 }
 export default function UserTableToolbar({
   numSelected,
@@ -26,6 +30,8 @@ export default function UserTableToolbar({
   onFilterName,
   statuses,
   onStatusesChange,
+  dateRange,
+  onDateRangeChange,
 }: UserTableToolbarProps) {
   const [expanded, setExpanded] = useState(false);
 
@@ -81,9 +87,31 @@ export default function UserTableToolbar({
             </ExpandMore>
           </Tooltip>
         </Grid>
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <Grid item xs={2} sx={{ pt: 2 }}>
-            <MultiSelect items={statuses} onStatusesChange={onStatusesChange} />
+        <Collapse in={expanded} timeout="auto" unmountOnExit sx={{ width: '100%' }}>
+          <Grid container>
+            <Grid item xs={12} md={6} sx={{ pt: 2 }}>
+              <MultiSelect items={statuses} onStatusesChange={onStatusesChange} />
+            </Grid>
+            <Grid item xs={12} md={6} sx={{ pt: 2 }}>
+              <DateRangePicker
+                value={dateRange}
+                onChange={onDateRangeChange}
+                appearance="subtle"
+                className="date-pickeer"
+                style={{
+                  padding: '9px 39px 9px 9px',
+                  border: '1px solid #343434',
+                  borderRadius: '4px',
+                  background: 'inherit',
+                  fontSize: '1rem',
+                  boxShadow: 'inset 0 1px 1px rgba(0,0,0,.075)',
+                  width: 'fit-content',
+                  '&:hover': {
+                    border: '1px solid #ffffff',
+                  },
+                }}
+              />
+            </Grid>
           </Grid>
         </Collapse>
       </Grid>

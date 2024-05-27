@@ -1,7 +1,9 @@
 import 'src/global.css';
-
+import 'rsuite/dist/rsuite.min.css';
+import 'src/custom-rsuite.css';
 import { PaletteMode } from '@mui/material';
 import React, { createContext } from 'react';
+import { CustomProvider } from 'rsuite';
 import { useScrollToTop } from 'src/hooks/use-scroll-to-top';
 import Router from 'src/routes/sections';
 import ThemeProvider from 'src/theme';
@@ -26,7 +28,9 @@ export default function App() {
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider mode={mode}>
-        <Router />
+        <CustomProvider theme={mode}>
+          <Router />
+        </CustomProvider>
       </ThemeProvider>
     </ColorModeContext.Provider>
   );
